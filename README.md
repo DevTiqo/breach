@@ -5,7 +5,9 @@ A mobile app that allows users connect to streams and read exciting posts from v
 
 
 
-1. A guide on how to generate a build 
+1. A guide on how to generate a build
+
+
 STEP 1: 
 Prepare Your Environment
 
