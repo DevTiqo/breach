@@ -1,7 +1,9 @@
 import 'package:breach/models/app_config.dart';
 import 'package:breach/modules/auth/auth.dart';
+import 'package:breach/modules/category/category.dart';
 import 'package:breach/modules/post/post.dart';
 import 'package:breach/notifiers/appConfigNotifier.dart';
+import 'package:breach/notifiers/categoriesNotifier.dart';
 import 'package:breach/notifiers/postsNotifier.dart';
 import 'package:breach/notifiers/auth_notifier.dart';
 import 'package:breach/theme/palette.dart';
@@ -27,3 +29,8 @@ final postsNotifierProvider = StateNotifierProvider<PostNotifier, PostState>((
 ) {
   return PostNotifier(postApi: PostApi(ref));
 });
+
+final categoriesNotifierProvider =
+    StateNotifierProvider<CategoryNotifier, CategoryState>((ref) {
+      return CategoryNotifier(postApi: CategoryApi(ref));
+    });

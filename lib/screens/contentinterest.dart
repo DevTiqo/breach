@@ -1,7 +1,17 @@
+import 'package:breach/models/category_model.dart';
+import 'package:breach/models/interest_model.dart';
+import 'package:breach/modules/http.dart';
+import 'package:breach/notifiers/categoriesNotifier.dart';
+import 'package:breach/notifiers/interest_notifier.dart';
+import 'package:breach/notifiers/providers.dart';
+import 'package:breach/screens/home/navhome.dart';
 import 'package:breach/theme/palette.dart';
 import 'package:breach/utils/imageconsts.dart';
+import 'package:breach/widgets/circularprogress.dart';
+import 'package:breach/widgets/notification_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class ContentInterest extends ConsumerStatefulWidget {
   static String routeName = '/contentinterest';
@@ -12,8 +22,31 @@ class ContentInterest extends ConsumerStatefulWidget {
 }
 
 class _ContentInterestState extends ConsumerState<ContentInterest> {
+  List<int> selectedInterests = [];
+  bool loading = false;
+
+  saveInterests() async {
+    setState(() {
+      loading = true;
+    });
+
+    final service = ref.read(interestsApiProvider);
+    final RequestResult result = await service.saveInterests(selectedInterests);
+
+    if (result.ok) {
+      context.pop();
+    } else {
+      callnotification(context, NotificationStatus.error, result.data);
+    }
+    setState(() {
+      loading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final interestsAsync = ref.watch(categoriesProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: Image.asset(ImageConst.breachlogo, width: 100),
@@ -25,7 +58,7 @@ class _ContentInterestState extends ConsumerState<ContentInterest> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              SizedBox(height: 84),
+              SizedBox(height: 36),
               Image.asset(ImageConst.beavercircle, width: 120),
 
               SizedBox(height: 36),
@@ -43,22 +76,56 @@ class _ContentInterestState extends ConsumerState<ContentInterest> {
                   context,
                 ).copyWith(fontWeight: FontWeight.w400),
               ),
-              SizedBox(height: 48),
-              Center(
-                child: ElevatedButton(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Next",
-                        textAlign: TextAlign.center,
-                        style: AppTheme.bigText(context).copyWith(
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white,
+              SizedBox(height: 24),
+              interestsAsync.when(
+                data: (interests) => interests.isEmpty
+                    ? const Center(child: Text("No interests found"))
+                    : Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Wrap(
+                          alignment: WrapAlignment.center,
+                          spacing: 8.0, // Gap between chips
+                          runSpacing: 4.0, // Gap between rows of chips
+
+                          children: interests.map((category) {
+                            return FilterChip(
+                              selectedColor: AppTheme.primaryLight,
+                              label: Text(
+                                category.icon + " " + category.name,
+                                style: AppTheme.smallText(
+                                  context,
+                                ).copyWith(fontWeight: FontWeight.w500),
+                              ),
+                              selected: selectedInterests.contains(category.id),
+                              onSelected: (bool selected) {
+                                setState(() {
+                                  if (selected) {
+                                    selectedInterests.add(category.id);
+                                  } else {
+                                    selectedInterests.remove(category.id);
+                                  }
+                                });
+                              },
+                            );
+                          }).toList(),
                         ),
                       ),
-                    ],
-                  ),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (err, stack) => Center(child: Text("Error: $err")),
+              ),
+              SizedBox(height: 24),
+              Center(
+                child: ElevatedButton(
+                  child: loading
+                      ? CircularProgress()
+                      : Text(
+                          "Next",
+                          textAlign: TextAlign.center,
+                          style: AppTheme.bigText(context).copyWith(
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white,
+                          ),
+                        ),
                   style: ButtonStyle(
                     shape: WidgetStatePropertyAll(
                       RoundedRectangleBorder(
@@ -81,14 +148,18 @@ class _ContentInterestState extends ConsumerState<ContentInterest> {
                       TextStyle(color: Colors.white),
                     ),
                   ),
-                  onPressed: () async {
-                    // await userlogin(email, password);
-                  },
+                  onPressed: selectedInterests.isEmpty || loading
+                      ? null
+                      : () async {
+                          saveInterests();
+                        },
                 ),
               ),
               SizedBox(height: 24),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  context.pop();
+                },
                 style: ButtonStyle(
                   shape: WidgetStatePropertyAll(
                     RoundedRectangleBorder(
@@ -111,6 +182,7 @@ class _ContentInterestState extends ConsumerState<ContentInterest> {
                   style: TextStyle(color: AppTheme.greyColor),
                 ),
               ),
+              SizedBox(height: 100),
             ],
           ),
         ),

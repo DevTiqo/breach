@@ -1,5 +1,7 @@
+import 'package:breach/models/post_model.dart';
 import 'package:breach/notifiers/providers.dart';
 import 'package:breach/theme/palette.dart';
+import 'package:breach/widgets/post_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -68,9 +70,9 @@ class _PostsTabState extends ConsumerState<PostsTab>
                       children: [
                         Text(
                           'Featured',
-                          style: AppTheme.smallText(
+                          style: AppTheme.normalText(
                             context,
-                          ).copyWith(fontWeight: FontWeight.w600),
+                          ).copyWith(fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
@@ -82,9 +84,9 @@ class _PostsTabState extends ConsumerState<PostsTab>
                       children: [
                         Text(
                           'Popular',
-                          style: AppTheme.smallText(
+                          style: AppTheme.normalText(
                             context,
-                          ).copyWith(fontWeight: FontWeight.w600),
+                          ).copyWith(fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
@@ -96,9 +98,9 @@ class _PostsTabState extends ConsumerState<PostsTab>
                       children: [
                         Text(
                           'Recent',
-                          style: AppTheme.smallText(
+                          style: AppTheme.normalText(
                             context,
-                          ).copyWith(fontWeight: FontWeight.w600),
+                          ).copyWith(fontWeight: FontWeight.w500),
                         ),
                       ],
                     ),
@@ -124,7 +126,7 @@ class _PostsTabState extends ConsumerState<PostsTab>
         SizedBox(height: 1.5),
         Expanded(
           child: TabBarView(
-            // physics: NeverScrollableScrollPhysics(),
+            physics: NeverScrollableScrollPhysics(),
             controller: tabController,
             children: [
               ref.read(postsNotifierProvider).postsFeatured.isEmpty
@@ -144,68 +146,48 @@ class _PostsTabState extends ConsumerState<PostsTab>
                         ),
                       ],
                     )
-                  : ListView.builder(
+                  : ListView(
                       shrinkWrap: true,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      itemCount: ref
-                          .read(postsNotifierProvider)
-                          .postsFeatured
-                          .length,
-                      controller: scrollController,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 0.3),
-                          child: InkWell(
-                            onTap: () {},
-                            child: Ink(
-                              decoration: BoxDecoration(
-                                color: ref
-                                    .read(themeNotifier)
-                                    .data
-                                    .scaffoldBackgroundColor,
-                                boxShadow: <BoxShadow>[
-                                  BoxShadow(
-                                    color: Color.fromRGBO(0, 0, 0, 0.1),
-                                    blurRadius: 1.0,
-                                    offset: Offset(0.0, 0.75),
-                                  ),
-                                ],
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12.0,
-                                  vertical: 18.0,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        SizedBox(width: 10.0),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [SizedBox(height: 0.5)],
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
+                      padding: EdgeInsets.zero,
+                      physics: NeverScrollableScrollPhysics(),
+                      children: [
+                        SizedBox(height: 12),
+                        Consumer(
+                          builder: (context, ref, child) {
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              padding: EdgeInsets.zero,
+                              itemCount: ref
+                                  .watch(postsNotifierProvider)
+                                  .postsFeatured
+                                  .length,
+                              itemBuilder: ((context, index) {
+                                Post thispost = ref
+                                    .watch(postsNotifierProvider)
+                                    .postsFeatured[index];
+                                return PostContainer(
+                                  key: Key(thispost.id.toString()),
+                                  post: thispost,
+                                );
+                              }),
+                            );
+                          },
+                        ),
+
+                        // postloading
+                        //     ? Center(child: CircularProgress())
+                        //     : (ref.watch(postsNotifierProvider).hasMorePosts !=
+                        //               null &&
+                        //           !ref.watch(postsNotifierProvider).hasMorePosts!)
+                        //     ? Icon(
+                        //         Icons.circle,
+                        //         size: 12,
+                        //         color: ref.watch(themeNotifier).data.cardColor,
+                        //       )
+                        //     : SizedBox(),
+                        SizedBox(height: 100.0),
+                      ],
                     ),
               ref.read(postsNotifierProvider).postsPopular.isEmpty
                   ? Column(
@@ -224,68 +206,39 @@ class _PostsTabState extends ConsumerState<PostsTab>
                         ),
                       ],
                     )
-                  : ListView.builder(
+                  : ListView(
                       shrinkWrap: true,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      itemCount: ref
-                          .read(postsNotifierProvider)
-                          .postsPopular
-                          .length,
-                      controller: scrollController,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 0.3),
-                          child: InkWell(
-                            onTap: () {},
-                            child: Ink(
-                              decoration: BoxDecoration(
-                                color: ref
-                                    .read(themeNotifier)
-                                    .data
-                                    .scaffoldBackgroundColor,
-                                boxShadow: <BoxShadow>[
-                                  BoxShadow(
-                                    color: Color.fromRGBO(0, 0, 0, 0.1),
-                                    blurRadius: 1.0,
-                                    offset: Offset(0.0, 0.75),
-                                  ),
-                                ],
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12.0,
-                                  vertical: 18.0,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        SizedBox(width: 10.0),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [SizedBox(height: 0.5)],
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
+                      padding: EdgeInsets.zero,
+                      physics: NeverScrollableScrollPhysics(),
+                      children: [
+                        SizedBox(height: 12),
+                        Consumer(
+                          builder: (context, ref, child) {
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              padding: EdgeInsets.zero,
+                              itemCount: ref
+                                  .watch(postsNotifierProvider)
+                                  .postsPopular
+                                  .length,
+                              itemBuilder: ((context, index) {
+                                Post thispost = ref
+                                    .watch(postsNotifierProvider)
+                                    .postsPopular[index];
+                                return PostContainer(
+                                  key: Key(thispost.id.toString()),
+                                  post: thispost,
+                                );
+                              }),
+                            );
+                          },
+                        ),
+
+                        SizedBox(height: 30),
+
+                        SizedBox(height: 100.0),
+                      ],
                     ),
 
               ref.read(postsNotifierProvider).postsRecent.isEmpty
@@ -305,68 +258,54 @@ class _PostsTabState extends ConsumerState<PostsTab>
                         ),
                       ],
                     )
-                  : ListView.builder(
+                  : ListView(
                       shrinkWrap: true,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      itemCount: ref
-                          .read(postsNotifierProvider)
-                          .postsRecent
-                          .length,
-                      controller: scrollController,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 0.3),
-                          child: InkWell(
-                            onTap: () {},
-                            child: Ink(
-                              decoration: BoxDecoration(
-                                color: ref
-                                    .read(themeNotifier)
-                                    .data
-                                    .scaffoldBackgroundColor,
-                                boxShadow: <BoxShadow>[
-                                  BoxShadow(
-                                    color: Color.fromRGBO(0, 0, 0, 0.1),
-                                    blurRadius: 1.0,
-                                    offset: Offset(0.0, 0.75),
-                                  ),
-                                ],
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12.0,
-                                  vertical: 18.0,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        SizedBox(width: 10.0),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [SizedBox(height: 0.5)],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
+                      padding: EdgeInsets.zero,
+                      physics: NeverScrollableScrollPhysics(),
+                      children: [
+                        SizedBox(height: 12),
+                        Consumer(
+                          builder: (context, ref, child) {
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              padding: EdgeInsets.zero,
+                              itemCount: ref
+                                  .watch(postsNotifierProvider)
+                                  .postsRecent
+                                  .length,
+                              itemBuilder: ((context, index) {
+                                Post thispost = ref
+                                    .watch(postsNotifierProvider)
+                                    .postsRecent[index];
+                                return PostContainer(
+                                  key: Key(thispost.id.toString()),
+                                  post: thispost,
+                                );
+                              }),
+                            );
+                          },
+                        ),
+
+                        SizedBox(height: 30),
+                        // postloading
+                        //     ? Center(child: CircularProgress())
+                        //     : (ref.watch(postsNotifierProvider).hasMorePosts !=
+                        //               null &&
+                        //           !ref.watch(postsNotifierProvider).hasMorePosts!)
+                        //     ? Icon(
+                        //         Icons.circle,
+                        //         size: 12,
+                        //         color: ref.watch(themeNotifier).data.cardColor,
+                        //       )
+                        //     : SizedBox(),
+                        SizedBox(height: 100.0),
+                      ],
                     ),
             ],
           ),
         ),
-        SizedBox(height: 2.0),
+        SizedBox(height: 0.0),
       ],
     );
   }

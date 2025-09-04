@@ -40,7 +40,6 @@ final Provider httpProvider = Provider(
       },
       onRetry: (baserequest, baseresponse, retryCount) async {
         try {
-          // await TokenRepository(ref).refreshToken();
           final Box box = await Hive.openBox('user');
           String? token = await box.get('token') ?? "";
 
@@ -50,7 +49,7 @@ final Provider httpProvider = Provider(
 
           baserequest.headers["authorization"] = "Bearer " + token!;
         } catch (e) {
-          debugPrint(e.toString());
+          print(e.toString());
         }
         // return baserequest;
       },
@@ -77,12 +76,8 @@ class HttpRepository {
       },
     );
     // debugPrint(result.statusCode.toString());
-    print(result.statusCode);
-    return RequestResult(
-      jsonDecode(result.body)["success"] ?? true,
-      result.statusCode,
-      jsonDecode(result.body),
-    );
+
+    return RequestResult(true, result.statusCode, jsonDecode(result.body));
   }
 
   Future<RequestResult> httpGetSec(String route, [dynamic data]) async {
@@ -92,6 +87,7 @@ class HttpRepository {
     Uri encoded = Uri.parse(url);
     final Box box = await Hive.openBox('user');
     String token = await box.get('token') ?? "";
+
     var result = await client.get(
       encoded,
       headers: {
@@ -101,11 +97,7 @@ class HttpRepository {
       },
     );
 
-    return RequestResult(
-      jsonDecode(result.body)["success"] ?? true,
-      result.statusCode,
-      jsonDecode(result.body),
-    );
+    return RequestResult(true, result.statusCode, jsonDecode(result.body));
   }
 
   Future<RequestResult> httpPost(String route, [dynamic data]) async {
@@ -121,11 +113,7 @@ class HttpRepository {
         // "Access-Control-Allow-Origin": "*"
       },
     );
-    return RequestResult(
-      jsonDecode(result.body)["success"] ?? true,
-      result.statusCode,
-      jsonDecode(result.body),
-    );
+    return RequestResult(true, result.statusCode, jsonDecode(result.body));
   }
 
   Future<RequestResult> httpPostSec(String route, [dynamic data]) async {
@@ -145,11 +133,7 @@ class HttpRepository {
       },
     );
 
-    return RequestResult(
-      jsonDecode(result.body)["success"] ?? true,
-      result.statusCode,
-      jsonDecode(result.body),
-    );
+    return RequestResult(true, result.statusCode, jsonDecode(result.body));
   }
 
   Future<RequestResult> httpDeleteSec(String route, [dynamic data]) async {
@@ -169,49 +153,8 @@ class HttpRepository {
       },
     );
 
-    return RequestResult(
-      jsonDecode(result.body)["success"] ?? true,
-      result.statusCode,
-      jsonDecode(result.body),
-    );
+    return RequestResult(true, result.statusCode, jsonDecode(result.body));
   }
-
-  // Future<RequestResult> httpFilePost(String route, [dynamic data]) async {
-  //   var url =
-  //       ref.read(appConfigNotifierProvider)!.apiGateway.coreUrl + "/$route";
-
-  //   var request = http.MultipartRequest('POST', Uri.parse(url));
-  //   request.headers['Content-Type'] = "multipart/form-data";
-  //   request.headers["Access-Control-Allow-Origin"] = "*";
-  //   final Box box = await Hive.openBox('user');
-  //   String token = await box.get('token') ?? "";
-  //   request.headers['authorization'] = "Bearer " + token;
-
-  //   List<Map<String, dynamic>> uploadspath = data['media'];
-  //   if (uploadspath.length > 0) {
-  //     uploadspath.forEach((element) async {
-  //       request.files.add(http.MultipartFile.fromBytes('media', element['blob'],
-  //           filename: element['name']));
-  //     });
-  //   }
-
-  //   request.fields['user_id'] = data['user_id'];
-  //   request.fields['platforms'] = jsonEncode(data['platforms']);
-  //   request.fields['account_id'] = data['account_id'];
-  //   request.fields['content'] = data['content'];
-  //   request.fields['hashtag'] = data['hashtag'];
-  //   request.fields['company_id'] = data['company_id'];
-
-  //   if (data['isScheduled'] == 1) {
-  //     request.fields['schedule_date'] = data['schedule_date'].toString();
-  //   }
-
-  //   var result = await request.send();
-  //   debugPrint(data['token']);
-  //   return RequestResult(true, result.statusCode,
-  //       jsonDecode(await result.stream.bytesToString()));
-  //   // return RequestResult(true, 200, {});
-  // }
 
   Future<RequestResult> httpMediaPost(String route, [dynamic data]) async {
     var url =

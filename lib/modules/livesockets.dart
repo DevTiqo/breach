@@ -2,95 +2,25 @@ import 'package:breach/notifiers/providers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-final socketProvider = Provider((ref) => WebSocket(ref));
-
-class WebSocket {
+class WebSocketService {
   late ProviderRef ref;
 
-  WebSocket(this.ref);
+  final WebSocketChannel _channel;
 
-  IO.Socket? channel;
+  WebSocketService(this.ref, String url)
+    : _channel = WebSocketChannel.connect(Uri.parse(url));
 
-  Future<bool> connect() async {
-    try {
-      // Dart client
-      channel = IO.io(
-        ref.read(appConfigNotifierProvider)!.apiGateway.socketUrl,
-        <String, dynamic>{
-          'transports': ['websocket'],
-          'autoConnect': false,
-        },
-      );
-      channel!.connect();
+  Stream<dynamic> get stream => _channel.stream;
 
-      channel!.onConnect((_) {
-        print('connect');
-      });
-
-      channel!.onDisconnect((_) => print('disconnect'));
-
-      return channel!.connected;
-    } catch (e) {
-      print(e);
-      print("eeeseseseseseseses");
-      return false;
-    }
+  void send(String message) {
+    _channel.sink.add(message);
   }
 
-  create({required String roomID}) async {
-    if (channel == null) {
-      await connect();
-      channel!.emit(
-        "create",
-        '{"meta":"create","roomID":"$roomID","clientID":"clientID2","message":"create"}',
-      );
-    }
-    channel!.emit(
-      "",
-      '{"meta":"create","roomID":"$roomID","clientID":"clientID2","message":"create"}',
-    );
-  }
-
-  join({
-    required String userID,
-    required String roomID,
-    List<int> allOtherUserIds = const [],
-  }) async {
-    if (channel == null) {
-      await connect();
-      channel!.emit("subscribe", {roomID, userID, allOtherUserIds});
-    }
-    channel!.emit("subscribe", {roomID, userID, allOtherUserIds});
-  }
-
-  leave({required String roomID}) async {
-    if (channel == null) {
-      await connect();
-      channel!.emit("unsubscribe", roomID);
-    }
-    channel!.emit("unsubscribe", roomID);
-  }
-
-  close() async {
-    if (channel == null) {
-      await connect();
-      await channel?.disconnect();
-    }
-
-    await channel?.disconnect();
-    channel?.clearListeners();
-    channel = null;
-  }
-
-  sendBroadcast({required String roomID, required String message}) async {
-    if (channel == null) {
-      await connect();
-      channel!.emit("sendbroadcast", {roomID, message});
-    }
-    channel!.emit("sendbroadcast", {roomID, message});
+  void dispose() {
+    _channel.sink.close();
   }
 }
 

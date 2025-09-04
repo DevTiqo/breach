@@ -1,8 +1,11 @@
+import 'package:breach/modules/http.dart';
 import 'package:breach/notifiers/providers.dart';
+import 'package:breach/screens/contentinterest.dart';
 import 'package:breach/screens/login.dart';
 import 'package:breach/theme/palette.dart';
 import 'package:breach/utils/imageconsts.dart';
 import 'package:breach/widgets/circularprogress.dart';
+import 'package:breach/widgets/notification_widget.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,9 +35,37 @@ class _CreateAccountState extends ConsumerState<CreateAccount> {
       loading = true;
     });
 
-    ref.read(authNotifierProvider.notifier).register(email, password);
+    RequestResult result = await ref
+        .read(authNotifierProvider.notifier)
+        .register(email.trim(), password.trim());
 
-    await Future.delayed(const Duration(seconds: 2));
+    if (result.ok) {
+      if (result.status == 200 || result.status == 201) {
+        debugPrint("200 way register");
+        setState(() {
+          loading = false;
+        });
+        if (mounted) {
+          context.pushReplacement(ContentInterest.routeName);
+        }
+      } else {
+        setState(() {
+          loading = false;
+        });
+        callnotification(context, NotificationStatus.error, result.data);
+        // debugPrint(result.data);
+      }
+    } else {
+      // debugPrint(result.toString());
+      setState(() {
+        loading = false;
+      });
+      callnotification(
+        context,
+        NotificationStatus.error,
+        result.data ?? 'None',
+      );
+    }
 
     setState(() {
       loading = false;

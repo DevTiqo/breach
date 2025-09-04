@@ -24,6 +24,7 @@ class _LandingState extends ConsumerState<Landing> {
       appBar: AppBar(
         // backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Image.asset(ImageConst.breachlogo, width: 100),
+        automaticallyImplyLeading: false,
         centerTitle: false,
       ),
       body: Center(

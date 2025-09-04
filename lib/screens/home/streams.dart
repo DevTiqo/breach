@@ -1,5 +1,8 @@
+import 'package:breach/modules/livesockets.dart';
+import 'package:breach/notifiers/socket_notifier.dart';
 import 'package:breach/theme/palette.dart';
 import 'package:breach/utils/imageconsts.dart';
+import 'package:breach/widgets/post_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -11,16 +14,48 @@ class Streams extends ConsumerStatefulWidget {
   ConsumerState<Streams> createState() => _StreamsState();
 }
 
-class _StreamsState extends ConsumerState<Streams> {
+class _StreamsState extends ConsumerState<Streams>
+    with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
+  @override
+  bool get wantKeepAlive => true;
+  @override
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: false);
+
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.bounceInOut,
+    );
+  }
+
+  connectToServer() async {}
+
+  @override
+  void dispose() {
+    _controller.dispose();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final posts = ref.watch(webSocketMessagesProvider);
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Streams',
           style: AppTheme.bigText(
             context,
-          ).copyWith(fontWeight: FontWeight.w500),
+          ).copyWith(fontWeight: FontWeight.w700),
         ),
         automaticallyImplyLeading: false,
         leading: IconButton(
@@ -31,88 +66,82 @@ class _StreamsState extends ConsumerState<Streams> {
         ),
         centerTitle: false,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(height: 84),
-              Stack(
-                children: [
-                  Container(
-                    width: 400,
-                    margin: EdgeInsets.symmetric(horizontal: 50),
-                    child: Image.asset(ImageConst.beaver, width: 300),
-                  ),
-                  Positioned(
-                    left: 0,
-                    top: 30,
-                    child: Image.asset(ImageConst.message, width: 200),
-                  ),
-                ],
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
+          return <Widget>[
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 4),
+                    Text(
+                      'Discover trending content from topics you care about in real time',
+                      style: AppTheme.normalText(
+                        context,
+                      ).copyWith(fontWeight: FontWeight.w400),
+                    ),
+                  ],
+                ),
               ),
-
-              SizedBox(height: 36),
-              Text(
-                'Streams 🥳',
-                style: AppTheme.extralargeText(
-                  context,
-                ).copyWith(fontWeight: FontWeight.w700),
-              ),
-              SizedBox(height: 24),
-              Text(
-                'Just a few quick questions to help personalise your Breach experience. Are you ready?',
-                textAlign: TextAlign.center,
-                style: AppTheme.mediumText(
-                  context,
-                ).copyWith(fontWeight: FontWeight.w400),
-              ),
-              SizedBox(height: 48),
-              Center(
-                child: ElevatedButton(
-                  child: Row(
+            ),
+          ];
+        },
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18),
+          child: posts.isEmpty
+              ? Center(
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Let's Begin",
-                        textAlign: TextAlign.center,
-                        style: AppTheme.bigText(context).copyWith(
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white,
+                        ' Syncing you to your best ',
+                        style: AppTheme.mediumText(
+                          context,
+                        ).copyWith(fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        ' Streams ',
+                        style: AppTheme.extralargeText(context).copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: AppTheme.primaryColor,
+                        ),
+                      ),
+                      SizedBox(height: 24),
+
+                      ScaleTransition(
+                        scale: _animation,
+                        child: Icon(
+                          Icons.flash_on,
+                          color: AppTheme.primaryColor,
+                          size: 300,
                         ),
                       ),
                     ],
                   ),
-                  style: ButtonStyle(
-                    shape: WidgetStatePropertyAll(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                )
+              : ListView.builder(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(8),
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: posts.length,
+                  itemBuilder: (context, index) {
+                    final msg = posts[index];
+
+                    return Align(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300]?.withAlpha(1),
+                          borderRadius: BorderRadius.circular(1),
+                        ),
+                        child: PostContainer(post: posts[index]),
                       ),
-                    ),
-                    fixedSize: WidgetStatePropertyAll(
-                      Size(MediaQuery.of(context).size.width - 100, 50),
-                    ),
-                    elevation: WidgetStatePropertyAll(0.0),
-                    backgroundColor: WidgetStateProperty.resolveWith<Color>((
-                      Set<WidgetState> states,
-                    ) {
-                      if (states.contains(WidgetState.disabled)) {
-                        return AppTheme.grayColor;
-                      }
-                      return AppTheme.black;
-                    }),
-                    textStyle: WidgetStatePropertyAll(
-                      TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  onPressed: () async {
-                    // await userlogin(email, password);
+                    );
                   },
                 ),
-              ),
-            ],
-          ),
         ),
       ),
     );

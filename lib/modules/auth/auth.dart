@@ -22,28 +22,36 @@ class Auth {
         {"email": email, "password": password},
       );
 
+      print(result.status.toString() + 'sss');
+
       if (result.ok) {
         debugPrint("OK resultu");
+        print(result.data);
 
-        if (result.status == 200) {
+        if (result.status == 200 || result.status == 201) {
           debugPrint("200 way");
 
-          User authUser = User.fromJson(result.data['data']);
-          // UserPreferences().saveUser(authUser);
-          // authNotifier.setUser(authUser);
+          User authUser = User.fromJson(result.data);
 
           return RequestResult(true, 200, authUser);
         } else {
-          return RequestResult(false, 400, result.data['message']);
+          return RequestResult(
+            false,
+            400,
+            result.data['message'] ?? "An Error Occurred, Try Again",
+          );
         }
       } else {
         return RequestResult(
           false,
           400,
-          result.data['message'] ?? "An Error Occurred, Try Again",
+          result.data['message'] ??
+              result.data['message'] ??
+              "An Error Occurred, Try Again",
         );
       }
     } catch (error) {
+      print(error);
       return RequestResult(false, 400, "Unknown Server Error, Try Again Later");
     }
   }
@@ -58,13 +66,16 @@ class Auth {
       if (result.ok) {
         debugPrint("OK resultu");
 
-        print(result.data['token']);
         if (result.status == 200) {
           User authUser = User.fromJson(result.data);
 
           return RequestResult(true, 200, authUser);
         } else {
-          return RequestResult(false, 400, result.data['message']);
+          return RequestResult(
+            false,
+            400,
+            result.data['message'] ?? "An Error Occurred, Try Again",
+          );
         }
       } else {
         return RequestResult(

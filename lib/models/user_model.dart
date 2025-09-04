@@ -44,7 +44,7 @@ class User {
       name: responseData['name'] ?? 'Devtiqo',
       email: responseData['email'] ?? 'user@gmail.com',
 
-      imageUrl: responseData['imageurl'] ?? '',
+      imageUrl: responseData['imageUrl'] ?? '',
 
       about: responseData['about'] ?? "",
 

@@ -6,9 +6,9 @@ class Post {
 
   final String title;
   final String content;
-  final String description;
+
   final DateTime createdAt;
-  final String imageUrl;
+  final String? imageUrl;
   final CategoryPost category;
   final Author author;
   final Series series;
@@ -16,8 +16,6 @@ class Post {
   Post({
     required this.id,
     required this.content,
-
-    required this.description,
 
     required this.title,
     required this.createdAt,
@@ -31,16 +29,13 @@ class Post {
     // List d = responseData['images'];
     print("Post SS");
 
-    debugPrint(responseData['images'].toString());
-
     return Post(
-      id: responseData['id_Post'],
+      id: responseData['id'],
       content: responseData['content'],
 
-      description: responseData['description'],
       title: responseData['title'],
       createdAt:
-          DateTime.tryParse(responseData['created_at'])?.toLocal() ??
+          DateTime.tryParse(responseData['createdAt'])?.toLocal() ??
           DateTime.now(),
       imageUrl: responseData['imageUrl'],
       category: CategoryPost.fromJson(responseData['category']),

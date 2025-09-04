@@ -45,6 +45,14 @@ class PostNotifier extends StateNotifier<PostState> {
     state = PostState(currentPost: post);
   }
 
+  setPosts(List<Post> posts) {
+    state = state.copyWith(
+      postsFeatured: posts,
+      postsPopular: posts,
+      postsRecent: posts,
+    );
+  }
+
   // void removePost(int postid) async {
   //   List<Post> remPost = List.from(state.userPost ?? []);
 
@@ -61,9 +69,9 @@ class PostNotifier extends StateNotifier<PostState> {
     if (req.ok) {
       // reqq = req;
       debugPrint("okayy");
-      Post post = req.data as Post;
+      List<Post> posts = req.data as List<Post>;
 
-      setCurrentPost(post);
+      setPosts(posts);
 
       return req;
       // await UserPreferences().saveUser(thisuser);

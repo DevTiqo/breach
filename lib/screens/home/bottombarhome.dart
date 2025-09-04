@@ -1,3 +1,4 @@
+import 'package:breach/theme/palette.dart';
 import 'package:flutter/material.dart';
 
 class CustomTabBar extends StatelessWidget {
@@ -18,6 +19,10 @@ class CustomTabBar extends StatelessWidget {
       child: TabBar(
         dividerHeight: 0,
         indicator: BoxDecoration(),
+        unselectedLabelStyle: TextStyle(
+          fontWeight: FontWeight.w600,
+          color: AppTheme.greyColor.withAlpha(150),
+        ),
         tabs: icons
             .asMap()
             .map(

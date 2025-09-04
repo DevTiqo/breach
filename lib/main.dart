@@ -1,4 +1,6 @@
 import 'package:breach/models/app_config.dart';
+import 'package:breach/models/user_model.dart';
+import 'package:breach/modules/userprefs.dart';
 import 'package:breach/notifiers/providers.dart';
 import 'package:breach/router.dart';
 import 'package:breach/theme/palette.dart';
@@ -12,6 +14,21 @@ Future<void> main() async {
 
   await Hive.initFlutter();
 
+  Future<bool> hasUserLogged(ProviderContainer container) async {
+    User currentUser = await UserPreferences().getUser();
+
+    if (currentUser.token!.isNotEmpty) {
+      await container
+          .read(authNotifierProvider.notifier)
+          .initializeUser(currentUser);
+      await container.read(themeNotifier.notifier).loadFromPrefs();
+
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   Future<bool> initalizeEnvironment(
     ProviderContainer container,
     AppConfig config,
@@ -23,6 +40,8 @@ Future<void> main() async {
   }
 
   final container = ProviderContainer();
+
+  await hasUserLogged(container);
 
   var configuredApp = AppConfig(
     child: ProviderScope(parent: container, child: MyApp()),

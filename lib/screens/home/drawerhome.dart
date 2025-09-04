@@ -6,6 +6,7 @@ import 'package:breach/widgets/home_screen_drawer_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:websafe_svg/websafe_svg.dart';
 
 class AppDrawer extends ConsumerStatefulWidget {
   AppDrawer({Key? key}) : super(key: key);
@@ -30,6 +31,7 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
             builder: (context, ref, child) => Padding(
               padding: defaultPadding,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
                     // title: Text("Dark Mode"),
@@ -40,6 +42,15 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                         : Icon(Icons.dark_mode),
                     onPressed: () {
                       ref.watch(themeNotifier).toggleTheme();
+                    },
+                    // value: ref.watch(themeNotifier).darkTheme,
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.logout, color: AppTheme.errorColor),
+                    onPressed: () async {
+                      await ref
+                          .watch(authNotifierProvider.notifier)
+                          .logout(ref.read(authNotifierProvider).user!);
                     },
                     // value: ref.watch(themeNotifier).darkTheme,
                   ),
@@ -54,22 +65,32 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 58),
+                SizedBox(height: 48),
                 Padding(
                   padding: defaultPadding,
                   child: Image.asset(ImageConst.breachlogo, width: 100),
                 ),
 
-                SizedBox(height: 24),
+                SizedBox(height: 36),
                 Center(
                   child: ElevatedButton(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        WebsafeSvg.asset(
+                          ImageConst.edit,
+                          fit: BoxFit.fitWidth,
+                          colorFilter: ColorFilter.mode(
+                            Colors.white,
+                            BlendMode.srcIn,
+                          ),
+                          width: 24,
+                        ),
+                        SizedBox(width: 4),
                         Text(
                           "Start writing",
                           textAlign: TextAlign.center,
-                          style: AppTheme.bigText(context).copyWith(
+                          style: AppTheme.mediumText(context).copyWith(
                             fontWeight: FontWeight.w400,
                             color: Colors.white,
                           ),
@@ -104,15 +125,29 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                     },
                   ),
                 ),
-                SizedBox(height: 24),
+                SizedBox(height: 36),
                 ListTile(
                   contentPadding: defaultPadding,
                   onTap: () {
                     context.pop();
                   },
                   title: DrawerNavigationDetails(
-                    icon: (const Icon(Icons.person)),
-                    detail: Text("Home"),
+                    icon: WebsafeSvg.asset(
+                      ImageConst.home,
+                      fit: BoxFit.fitWidth,
+                      colorFilter: ColorFilter.mode(
+                        AppTheme.grayColor,
+                        BlendMode.srcIn,
+                      ),
+                      width: 24,
+                    ),
+                    detail: Text(
+                      "Home",
+                      style: AppTheme.mediumText(context).copyWith(
+                        fontWeight: FontWeight.w400,
+                        color: AppTheme.greyColor,
+                      ),
+                    ),
                   ),
                 ),
 
@@ -121,22 +156,49 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                   contentPadding: defaultPadding,
                   onTap: () {
                     context.pop();
-                    context.push('/dashboard');
                   },
                   title: DrawerNavigationDetails(
-                    icon: (const Icon(Icons.dashboard)),
-                    detail: Text("Dashboard"),
+                    icon: WebsafeSvg.asset(
+                      ImageConst.grid,
+                      fit: BoxFit.fitWidth,
+                      colorFilter: ColorFilter.mode(
+                        AppTheme.grayColor,
+                        BlendMode.srcIn,
+                      ),
+                      width: 24,
+                    ),
+                    detail: Text(
+                      "Dashboard",
+                      style: AppTheme.mediumText(context).copyWith(
+                        fontWeight: FontWeight.w400,
+                        color: AppTheme.greyColor,
+                      ),
+                    ),
                   ),
                 ),
+                SizedBox(height: 10),
                 ListTile(
                   contentPadding: defaultPadding,
                   onTap: () {
                     context.pop();
-                    context.push('/invitefriends');
                   },
                   title: DrawerNavigationDetails(
-                    icon: (const Icon(Icons.group_add_outlined)),
-                    detail: Text("Publications"),
+                    icon: WebsafeSvg.asset(
+                      ImageConst.messageIcon,
+                      fit: BoxFit.fitWidth,
+                      colorFilter: ColorFilter.mode(
+                        AppTheme.grayColor,
+                        BlendMode.srcIn,
+                      ),
+                      width: 24,
+                    ),
+                    detail: Text(
+                      "Publications",
+                      style: AppTheme.mediumText(context).copyWith(
+                        fontWeight: FontWeight.w400,
+                        color: AppTheme.greyColor,
+                      ),
+                    ),
                   ),
                 ),
 

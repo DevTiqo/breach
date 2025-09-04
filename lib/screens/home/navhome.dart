@@ -28,7 +28,6 @@ class _NavHomeState extends ConsumerState<NavHome> {
   int _selectedIndex = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool warningupdate = false;
-  late WebSocket socket;
 
   late dynamic getlocals;
   callDrawer() {
@@ -37,57 +36,12 @@ class _NavHomeState extends ConsumerState<NavHome> {
 
   @override
   void initState() {
-    // TODO: implement initState
-
     super.initState();
-    socket = ref.read(socketProvider);
-
-    connectToServer();
-
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   ref
-    //       .read(authNotifierProvider.notifier)
-    //       .getUser(id_user: ref.read(authNotifierProvider).user.id)
-    //       .then((s) async {
-    //         if (s.ok) {
-    //           ref.read(postNotifierProvider.notifier).setLocalPosts();
-
-    //           ref.read(sportNotifierProvider.notifier).getSports();
-
-    //           if (ref.read(authNotifierProvider).user.usertype ==
-    //               UserType.Personal) {
-    //             ref
-    //                 .read(authNotifierProvider.notifier)
-    //                 .getOrganisations(ref.read(authNotifierProvider).user.id);
-    //           } else if (ref.read(authNotifierProvider).user.usertype ==
-    //               UserType.Organisation) {
-    //             ref
-    //                 .read(authNotifierProvider.notifier)
-    //                 .getOrganisationManagers(
-    //                   ref.read(authNotifierProvider).user.id,
-    //                 );
-    //           }
-    //           warningupdate = await warningUpdate();
-
-    //           if (warningupdate) displaySheet(context);
-    //         }
-    //       });
-    // });
   }
 
   @override
   void dispose() {
-    socket.close();
     super.dispose();
-  }
-
-  connectToServer() async {
-    if (socket.channel == null) {
-      var connected = await socket.connect();
-      debugPrint(connected.toString());
-    }
-
-    socket.channel?.emit("identity", 'ref.read(authNotifierProvider).user.id');
   }
 
   @override
@@ -108,7 +62,9 @@ class _NavHomeState extends ConsumerState<NavHome> {
       Tab(
         icon: Icon(
           Icons.star,
-          color: 0 == _selectedIndex ? AppTheme.primaryColor : Colors.grey,
+          color: 0 == _selectedIndex
+              ? AppTheme.primaryColor
+              : AppTheme.greyColor.withAlpha(150),
           size: 32.0,
         ),
         text: 'Top Picks',
@@ -116,7 +72,9 @@ class _NavHomeState extends ConsumerState<NavHome> {
       Tab(
         icon: Icon(
           Icons.flash_on,
-          color: 1 == _selectedIndex ? AppTheme.primaryColor : Colors.grey,
+          color: 1 == _selectedIndex
+              ? AppTheme.primaryColor
+              : AppTheme.greyColor.withAlpha(150),
           size: 32.0,
         ),
         text: 'Streams',

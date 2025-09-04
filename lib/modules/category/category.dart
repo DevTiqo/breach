@@ -8,35 +8,35 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PostApi {
+class CategoryApi {
   final Ref ref;
 
-  PostApi(this.ref);
+  CategoryApi(this.ref);
 
-  getPosts(int categoryId) async {
+  getCategories() async {
     String endpoint;
 
     try {
       print('dddwjndj');
       RequestResult result = await ref
           .read(httpProvider)
-          .httpGetSec("api/blog/posts?categoryId=$categoryId", {});
-      print(result);
+          .httpGetSec("api/blog/categories", {});
+      print(result.ok);
       if (result.ok) {
         debugPrint("OK resultu");
 
         if (result.status == 200) {
-          List<Post> post = [];
+          List<CategoryPost> categorypost = [];
           debugPrint("200 way post");
 
           print(result.data);
           List d = result.data as List;
           for (var element in d) {
-            Post postpost = Post.fromJson(element);
-            post.add(postpost);
+            CategoryPost thiscategorypost = CategoryPost.fromJson(element);
+            categorypost.add(thiscategorypost);
           }
 
-          return RequestResult(true, 200, post);
+          return RequestResult(true, 200, categorypost);
         } else {
           return RequestResult(false, 400, result.data['message']);
         }

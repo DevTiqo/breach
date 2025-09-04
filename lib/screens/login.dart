@@ -1,8 +1,11 @@
+import 'package:breach/modules/http.dart';
 import 'package:breach/notifiers/providers.dart';
 import 'package:breach/screens/createaccount.dart';
+import 'package:breach/screens/home/navhome.dart';
 import 'package:breach/theme/palette.dart';
 import 'package:breach/utils/imageconsts.dart';
 import 'package:breach/widgets/circularprogress.dart';
+import 'package:breach/widgets/notification_widget.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,9 +35,35 @@ class _LoginState extends ConsumerState<Login> {
       loading = true;
     });
 
-    ref.read(authNotifierProvider.notifier).login(email, password);
+    RequestResult result = await ref
+        .read(authNotifierProvider.notifier)
+        .login(email.trim(), password.trim());
+    // debugPrint(result.data);
+    if (result.ok) {
+      debugPrint("OK resultu");
 
-    await Future.delayed(const Duration(seconds: 2));
+      if (result.status == 200) {
+        debugPrint("200 way login");
+        setState(() {
+          loading = false;
+        });
+        if (mounted) {
+          context.pushReplacement(NavHome.routeName);
+        }
+      } else {
+        setState(() {
+          loading = false;
+        });
+        callnotification(context, NotificationStatus.error, result.data);
+        // debugPrint(result.data);
+      }
+    } else {
+      // debugPrint(result.toString());
+      setState(() {
+        loading = false;
+      });
+      callnotification(context, NotificationStatus.error, result.data);
+    }
 
     setState(() {
       loading = false;

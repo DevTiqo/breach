@@ -43,8 +43,14 @@ dependencies:
   shared_preferences: ^2.1.1
   http: ^1.0.0
   socket_io_client: ^3.1.2
+  web_socket_channel: ^3.0.1
   pull_to_refresh: ^2.0.0
   extended_image: ^9.1.0
+  websafe_svg: ^3.0.0+5
+  another_flushbar: ^1.12.30
+  jiffy: ^6.2.2
+  modal_bottom_sheet: ^3.0.0-pre
+
 
 dev_dependencies:
   flutter_test:
@@ -72,6 +78,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    - assets/images/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
