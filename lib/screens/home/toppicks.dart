@@ -101,17 +101,17 @@ class _TopPicksState extends ConsumerState<TopPicks> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 16),
                         Text(
                           'Select category',
                           style: AppTheme.bigText(
                             context,
                           ).copyWith(fontWeight: FontWeight.w600),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 16),
                         Wrap(
                           spacing: 8,
-                          runSpacing: 8,
+                          runSpacing: 1,
                           alignment: WrapAlignment.center,
                           children: ref
                               .read(categoriesNotifierProvider)

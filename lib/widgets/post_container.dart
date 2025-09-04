@@ -131,13 +131,16 @@ class _PostContainerState extends ConsumerState<PostContainer> {
                       SizedBox(height: 4),
                       Row(
                         children: [
-                          Text(
-                            widget.post.author.name.toUpperCase(),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            style: AppTheme.smallText(context).copyWith(
-                              fontWeight: FontWeight.w500,
-                              color: AppTheme.greyColor,
+                          SizedBox(
+                            width: 130,
+                            child: Text(
+                              widget.post.author.name.toUpperCase(),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: AppTheme.smallText(context).copyWith(
+                                fontWeight: FontWeight.w500,
+                                color: AppTheme.greyColor,
+                              ),
                             ),
                           ),
                           SizedBox(width: 8),

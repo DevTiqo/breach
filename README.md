@@ -1,7 +1,7 @@
 # Breach
+Welcome to Breach!
+A mobile app that allows users connect to streams and read exciting posts from various categories.
 
-
-// TODO: implement wantKeepAlive
 
 1. A guide on how to generate a build (points for having a bash script for this).
 STEP 1: 
@@ -35,48 +35,58 @@ to make the script executable
 
 2. A breakdown of what you’ve done and how to follow the code.
 
+A. Authentication & Caching User
+
+I consumed endpoints provided on Swagger to authenticate user
+
+I used shared_preferences (or hive) to store a logged-in user locally.
+
+On app launch, we check if the user is cached → skip login.
+
+A StateNotifierProvider (authNotifierProvider) manages the current user.
+
+B. Theme Mode (Dark/Light)
+
+themeModeProvider is a StateProvider<ThemeMode> with a toggle.
+
+The app listens to it and switches between ThemeData.light() and ThemeData.dark().
+
+Preference is stored so it persists across app restarts.
+
+C. Posts Stream
+
+Posts come from postsStreamProvider → a StreamProvider<List<Post>>.
+
+This keeps UI live-updated (new posts appear without refresh).
+
+D. Categories (Interests)
+
+User can select/change categories (categoriesProvider).
+
+
+E. App Structure
+
+main.dart.
+
+AppConfig to initialize app environment and endpoints
+
+Router using GoRouter
+
+AppTheme initialization
+
+
+
+
+
 3. Link to Google Drive containing a demo of your app on Android and iOS (using
 an emulator is perfectly fine).
 
+https://drive.google.com/file/d/1aOwrVogCiVxPzSF2hfdci4wxJ3cUE9Xg/view?usp=drive_link
+
+
 
 4. Ensure all the links are publicly accessible.
+Yes
 
 
 
-
-
-1. Register and Login using email and password.
-2. List of posts from the backend.
-3. Ability to filter posts based on categories (as it appears on the design).
-4. A user selecting their topics of interest during onboarding.
-5. The stream showing the most recent 5 events sent via websocket.
-
-
-1. API for user registration using email and password.
-2. API for users to login using email and password.
-3. API to get all blog posts.
-4. API to get all blog categories.
-5. Ability to filter posts based on categories (as it appears on the design).
-6. API to save user interests during onboarding.
-7. Authenticated Web socket to stream news events on the dashboard.
-
-1. Build the frontend using React.
-2. Handle errors correctly and prompt users to take corrective actions.
-3. Ensure the final product can handle multiple concurrent events without
-degrading.
-
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.

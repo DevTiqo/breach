@@ -63,7 +63,7 @@ class InterestApi {
     try {
       RequestResult result = await ref.read(httpProvider).httpMediaPost(
         "api/users/${ref.read(authNotifierProvider).user?.id.toString()}/interests",
-        {"interests": interests, "categoryIds": interests},
+        {"interests": interests},
       );
       print(result);
       if (result.ok) {

@@ -46,11 +46,16 @@ class _AppDrawerState extends ConsumerState<AppDrawer> {
                     // value: ref.watch(themeNotifier).darkTheme,
                   ),
                   IconButton(
+                    // title: Text("Dark Mode"),
+
+                    // highlightColor: AppTheme.primaryColor.withOpacity(0.3),
                     icon: Icon(Icons.logout, color: AppTheme.errorColor),
                     onPressed: () async {
                       await ref
                           .watch(authNotifierProvider.notifier)
                           .logout(ref.read(authNotifierProvider).user!);
+
+                      context.push('/');
                     },
                     // value: ref.watch(themeNotifier).darkTheme,
                   ),
