@@ -3,7 +3,9 @@ Welcome to Breach!
 A mobile app that allows users connect to streams and read exciting posts from various categories.
 
 
-1. A guide on how to generate a build (points for having a bash script for this).
+
+
+1. A guide on how to generate a build 
 STEP 1: 
 Prepare Your Environment
 
@@ -78,14 +80,13 @@ AppTheme initialization
 
 
 
-3. Link to Google Drive containing a demo of your app on Android and iOS (using
-an emulator is perfectly fine).
+3. Link to Google Drive containing a demo of your app on Android and iOS 
 
 https://drive.google.com/file/d/1aOwrVogCiVxPzSF2hfdci4wxJ3cUE9Xg/view?usp=drive_link
 
 
 
-4. Ensure all the links are publicly accessible.
+4. Links are publicly accessible.
 Yes
 
 
